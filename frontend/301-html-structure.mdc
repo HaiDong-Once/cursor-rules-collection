@@ -1,0 +1,276 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# HTML结构规范 (301)
+
+## 规则概述
+
+本规范定义了HTML文档的结构和编码规范，旨在提高代码的可读性、可维护性和语义化。
+
+## 基本规范
+
+### 1.1 文档结构
+
+- 使用 HTML5 文档类型：`<!DOCTYPE html>`
+- 使用 UTF-8 字符编码：`<meta charset="UTF-8">`
+- 添加适当的视口设置：`<meta name="viewport" content="width=device-width, initial-scale=1.0">`
+- 使用语义化标签组织页面结构：`<header>`, `<footer>`, `<main>`, `<section>`, `<article>`, `<nav>`, `<aside>`
+
+```html
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>页面标题</title>
+</head>
+<body>
+  <!-- 头部区域 开始 -->
+  <header>
+    <nav>
+      <ul>
+        <li><a href="/">首页</a></li>
+        <li><a href="/about">关于</a></li>
+      </ul>
+    </nav>
+  </header>
+  <!-- 头部区域 结束 -->
+  
+  <!-- 主要内容 开始 -->
+  <main>
+    <section>
+      <h2>内容区域标题</h2>
+      <article>
+        <h3>文章标题</h3>
+        <p>内容区块</p>
+      </article>
+    </section>
+    <aside>侧边栏</aside>
+  </main>
+  <!-- 主要内容 结束 -->
+  
+  <!-- 页脚区域 开始 -->
+  <footer>
+    <p>版权信息</p>
+  </footer>
+  <!-- 页脚区域 结束 -->
+</body>
+</html>
+```
+
+### 1.2 代码格式
+
+- 缩进使用 2 个空格（一个 tab）
+- 使用双引号 `"` 而非单引号 `'` 标记属性值
+- 标签名、属性名全部使用小写
+
+```html
+<!-- 推荐 -->
+<div class="example" data-type="demo">
+  <p>示例文本</p>
+</div>
+
+<!-- 不推荐 -->
+<DIV CLASS='example' data-Type='demo'>
+  <P>示例文本</P>
+</DIV>
+```
+
+### 1.3 分块注释
+
+在每个组件模块的起始和结束位置添加HTML注释，便于识别模块的范围：
+
+```html
+<!-- 用户信息模块 开始 -->
+<section class="user-info">
+  <h2>用户详情</h2>
+  <div class="user-avatar">
+    <img src="avatar.jpg" alt="用户头像">
+  </div>
+  <div class="user-details">
+    <!-- 用户基本信息 -->
+    <p>姓名：张三</p>
+    <p>年龄：30</p>
+  </div>
+</section>
+<!-- 用户信息模块 结束 -->
+```
+
+## 语义化规范
+
+### 2.1 使用语义化标签
+
+优先使用语义化标签，而不是简单的 `<div>` 或 `<span>`：
+
+```html
+<!-- 推荐 -->
+<header>
+  <h1>网站标题</h1>
+</header>
+<nav>
+  <ul>
+    <li><a href="/">首页</a></li>
+    <li><a href="/about">关于</a></li>
+  </ul>
+</nav>
+<main>
+  <article>
+    <h2>文章标题</h2>
+    <p>文章内容...</p>
+  </article>
+</main>
+<footer>
+  <p>版权信息</p>
+</footer>
+
+<!-- 不推荐 -->
+<div class="header">
+  <h1>网站标题</h1>
+</div>
+<div class="nav">
+  <ul>
+    <li><a href="/">首页</a></li>
+    <li><a href="/about">关于</a></li>
+  </ul>
+</div>
+<div class="content">
+  <div class="article">
+    <h2>文章标题</h2>
+    <p>文章内容...</p>
+  </div>
+</div>
+<div class="footer">
+  <p>版权信息</p>
+</div>
+```
+
+### 2.2 标题层级
+
+- 一个页面只有一个 `<h1>` 标签
+- 标题标签按层级顺序使用，不要跳过级别
+
+```html
+<!-- 推荐 -->
+<h1>网站标题</h1>
+<section>
+  <h2>主要内容标题</h2>
+  <article>
+    <h3>文章标题</h3>
+    <h4>文章子标题</h4>
+  </article>
+</section>
+
+<!-- 不推荐 -->
+<h1>网站标题</h1>
+<section>
+  <h3>主要内容标题</h3> <!-- 跳过了 h2 -->
+  <article>
+    <h2>文章标题</h2> <!-- 标题层级混乱 -->
+    <h5>文章子标题</h5> <!-- 跳过了 h4 -->
+  </article>
+</section>
+```
+
+## 属性规范
+
+### 3.1 属性顺序
+
+HTML 属性应当按照特定的顺序排列，以提高代码的可读性：
+
+1. `id`
+2. `class`
+3. `name`
+4. `data-*`
+5. `src`, `href`, `for`, `type`, `value` 等
+6. `title`, `alt` 等
+7. `aria-*`, `role`
+8. 事件处理函数 `on*`
+
+```html
+<a id="unique-id" class="btn btn-primary" data-toggle="modal" href="https://example.com" title="点击查看详情" onclick="handleClick()">详情</a>
+```
+
+### 3.2 布尔属性
+
+布尔属性不需要指定属性值，只需添加属性名即可：
+
+```html
+<!-- 推荐 -->
+<input type="text" disabled>
+<input type="checkbox" checked>
+
+<!-- 不推荐 -->
+<input type="text" disabled="disabled">
+<input type="checkbox" checked="checked">
+```
+
+## 可访问性
+
+### 4.1 表单控件
+
+每个表单控件都应有对应的 `<label>` 标签，并使用 `for` 属性关联：
+
+```html
+<!-- 推荐 -->
+<label for="username">用户名：</label>
+<input type="text" id="username" name="username">
+
+<!-- 不推荐 -->
+用户名：<input type="text" name="username">
+```
+
+### 4.2 替代文本
+
+所有 `<img>` 标签必须包含 `alt` 属性，提供替代文本：
+
+```html
+<!-- 推荐 -->
+<img src="logo.png" alt="公司标志">
+
+<!-- 对于装饰性图片 -->
+<img src="decoration.png" alt="">
+```
+
+## 最佳实践
+
+### 5.1 避免过多嵌套
+
+避免不必要的标签嵌套，保持结构简洁：
+
+```html
+<!-- 推荐 -->
+<ul class="menu">
+  <li>菜单项1</li>
+  <li>菜单项2</li>
+</ul>
+
+<!-- 不推荐 -->
+<div class="menu-container">
+  <div class="menu-wrapper">
+    <ul class="menu">
+      <li><span>菜单项1</span></li>
+      <li><span>菜单项2</span></li>
+    </ul>
+  </div>
+</div>
+```
+
+### 5.2 自闭合标签
+
+对于无内容的标签，使用自闭合格式：
+
+```html
+<!-- 推荐 -->
+<img src="logo.png" alt="Logo">
+<input type="text" name="username">
+<br>
+
+<!-- 不推荐 -->
+<img src="logo.png" alt="Logo"></img>
+<input type="text" name="username"></input>
+<br></br>
+```
+
+

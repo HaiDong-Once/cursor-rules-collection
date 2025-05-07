@@ -1,0 +1,385 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# 现代Web技术开发规范
+
+本指南概述了使用现代Web技术（包括ReactJS、NextJS、Redux、TypeScript、JavaScript、HTML、CSS和UI框架）进行开发的最佳实践、约定和标准。
+
+## 开发理念
+- 编写干净、可维护和可扩展的代码
+- 遵循SOLID原则
+- 函数式和声明式编程模式优于命令式
+- 强调类型安全和静态分析
+- 实践组件驱动开发
+
+## 代码实现指南
+
+### 规划阶段
+- 从逐步规划开始
+- 实现前编写详细的伪代码
+- 记录组件架构和数据流
+- 考虑边缘情况和错误场景
+
+### 代码风格
+- 使用制表符进行缩进
+- 使用单引号表示字符串（除非需要避免转义）
+- 省略分号（除非需要消除歧义）
+- 消除未使用的变量
+- 在关键词后添加空格
+- 在函数声明括号前添加空格
+- 始终使用严格相等(===)而非宽松相等(==)
+- 中缀运算符两侧加空格
+- 逗号后添加空格
+- else语句与闭合花括号保持同一行
+- 多行if语句使用花括号
+- 回调中始终处理错误参数
+- 限制行长度在80个字符以内
+- 在多行对象/数组字面量中使用尾随逗号
+
+## 命名约定
+
+### 一般规则
+- 使用PascalCase（帕斯卡命名法）命名：
+  - 组件
+  - 类型定义
+  - 接口
+- 使用kebab-case（短横线命名法）命名：
+  - 目录名（例如：components/auth-wizard）
+  - 文件名（例如：user-profile.tsx）
+- 使用camelCase（驼峰命名法）命名：
+  - 变量
+  - 函数
+  - 方法
+  - 钩子
+  - 属性
+  - Props
+- 使用UPPERCASE（大写）命名：
+  - 环境变量
+  - 常量
+  - 全局配置
+
+### 特定命名模式
+- 事件处理程序前缀为'handle'：handleClick, handleSubmit
+- 布尔变量前缀使用动词：isLoading, hasError, canSubmit
+- 自定义钩子前缀为'use'：useAuth, useForm
+- 使用完整词汇而非缩写，除了以下情况：
+  - err（error的缩写）
+  - req（request的缩写）
+  - res（response的缩写）
+  - props（properties的缩写）
+  - ref（reference的缩写）
+- 数组命名：名词+List, 名词+s, 如：`userList`
+- 常量使用全大写下划线分隔命名，力求语义表达完整清楚：`const API_ENDPOINT = "https://a"`
+
+### 命名严谨性（可读性）❤️
+- 代码中的命名严禁使用拼音与英文混合的方式，更不允许直接使用中文的方式（除特殊含义命名：如shuidi,jingdong)
+- 杜绝完全不规范的缩写，避免望文不知义
+
+### 避免魔法数字
+```javascript
+// 魔法数字
+if (state === 1 || state === 2) {
+  // ...
+} else if (state === 3) {
+  // ...
+}
+
+// 魔法数字改用常量映射
+const UNPUBLISHED = 1;
+const PUBLISHED = 2;
+const DELETED = 3;
+
+if (state === UNPUBLISHED || state === PUBLISHED) {
+  // ...
+} else if (state === DELETED) {
+  // ...
+}
+```
+
+## React最佳实践
+
+### 组件架构
+- 使用带TypeScript接口的函数组件
+- 使用function关键字定义组件
+- 将可复用逻辑提取到自定义钩子中
+- 实现合适的组件组合
+- 策略性地使用React.memo()提高性能
+- 在useEffect钩子中实现适当的清理
+- 保持组件职责单一，避免组件过大 ❤️
+- 函数式组件优先：React组件应优先使用函数组件，结合React Hooks管理状态 ❤️
+
+### JSX书写规范
+- JSX代码中每个标签属性必须换行书写 ❤️
+```jsx
+<Component
+  prop1="value1"
+  prop2="value2"
+/>
+```
+- 在列表渲染中必须绑定key索引 ❤️
+- 避免在JSX中定义内联函数
+- 避免使用内联样式、内联事件，模板应简洁明了
+
+### React性能优化
+- 使用useCallback记忆回调函数
+- 为昂贵的计算实现useMemo
+- 使用动态导入实现代码分割
+- 在列表中正确实现key props（避免使用索引作为key）
+
+## Next.js最佳实践
+
+### 核心概念
+- 利用App Router进行路由
+- 实现适当的元数据管理
+- 使用适当的缓存策略
+- 实现适当的错误边界
+
+### 组件和功能
+- 使用Next.js内置组件：
+  - Image组件用于优化图像
+  - Link组件用于客户端导航
+  - Script组件用于外部脚本
+  - Head组件用于元数据
+- 实现适当的加载状态
+- 使用适当的数据获取方法
+
+### 服务器组件
+- 默认使用服务器组件
+- 使用URL查询参数进行数据获取和服务器状态管理
+- 仅在必要时使用'use client'指令：
+  - 事件监听器
+  - 浏览器API
+  - 状态管理
+  - 仅客户端库
+
+## TypeScript实现
+- 启用严格模式
+- 为组件props、状态和Redux状态结构定义清晰的接口
+- 使用类型保护安全处理可能的undefined或null值
+- 在需要类型灵活性的函数、操作和切片中应用泛型
+- 利用TypeScript实用工具类型（Partial、Pick、Omit）实现更简洁和可复用的代码
+- 定义对象结构时，特别是在扩展时，优先使用interface而非type
+- 使用映射类型动态创建现有类型的变体
+
+## UI和样式
+
+### 组件库
+- 使用AntD UI实现一致、可访问的组件设计
+- 应用组合模式创建模块化、可复用组件
+
+### 样式指南
+- 采用scss语法，嵌套结构不超过3层
+- 采用css module模式进行样式隔离
+<!-- - 使用Tailwind CSS进行样式设计 -->
+<!-- - 采用实用优先的Tailwind CSS，实现可维护的样式 -->
+- 采用移动优先、响应式原则设计，实现跨设备灵活性
+<!-- - 使用CSS变量或Tailwind的深色模式功能实现深色模式 -->
+- 确保颜色对比度满足无障碍标准，提高可读性
+- CSS选择器中避免使用标签名，优先使用类选择器 ❤️
+- 使用直接子选择器
+```css
+/* 不推荐 */
+.content .title {
+   font-size: 2rem;
+}
+
+/* 推荐 */
+.content > .title {
+   font-size: 2rem;
+}
+```
+- 尽量避免使用ID选择器及全局标签选择器防止污染全局样式
+
+## JavaScript规范
+
+### ES6+特性
+- 应优先使用ES6+语法，如const, let, 箭头函数, 模板字符串, 解构赋值，避免使用var
+- 箭头函数：优先使用箭头函数，特别是在回调函数和事件处理程序中，避免this指向问题
+
+### 代码复杂度
+- 条件判断和循环最多三层
+- 慎用console.log
+
+## 错误处理
+
+### 错误边界
+- 在React中实现错误边界以捕获组件树中的JavaScript错误
+```javascript
+// React错误边界
+class ErrorBoundary extends React.Component { 
+  componentDidCatch(error, errorInfo) {
+    // 可以在此处记录错误日志或进行其他处理
+    console.error("Caught an error:", error, errorInfo);
+  } 
+}
+export default ErrorBoundary;
+```
+
+### 异步错误处理
+- 对所有异步请求使用try-catch捕获错误
+```javascript
+try {
+  const response = await fetchData();
+} catch (error) {
+  console.error("Error fetching data:", error);
+}
+```
+
+### Promise错误处理
+- 必须处理所有Promise的catch，不要忽略潜在错误
+```javascript
+fetchData().then(response => {
+  // success
+}).catch(error => {
+  console.error("Error:", error); // 记录promise异常日志
+});
+```
+
+## 空值处理
+- 对可选链操作：`user?.profile?.avatar`
+```javascript
+// 深层对象
+if (
+  store.getters &&
+  store.getters.userInfo &&
+  store.getters.userInfo.menus
+) {}
+
+// 可以使用可选链进行优化
+if (store?.getters?.userInfo?.menus) {}
+```
+- 使用空值合并操作符：`const value = input ?? "default"`
+- 空函数处理
+```javascript
+// 优化前
+props.onChange && props.onChange(e)
+
+// 支持ES11
+props?.onChange?.(e)
+
+// 不支持ES11的老项目
+const NOOP = () => {}
+const { onChange = NOOP } = props
+onChange(e)
+```
+
+## 注释规范
+
+### 函数注释
+- 使用JSDoc标准注释函数
+```javascript
+/**
+ * 获取用户数据
+ * @param {string} userId 用户ID
+ * @returns {Object} 用户数据
+ */
+const getUserData = (userId) => { ... };
+```
+
+### 代码注释原则
+- 重要逻辑段落注释：在复杂逻辑或边界处理的地方加上注释，以提高代码可读性
+- 避免显而易见的注释：如 `let x = 1; // 将x设置为1` 这样的注释不必要
+
+## 逻辑判断规范
+
+### 比较运算符
+- 避免使用双等号==：应始终使用严格等于===来进行比较（避免隐式转换产生的异常）
+
+### 条件判断简洁化
+- 尽量避免使用复杂的嵌套条件语句，必要时使用早返回减少嵌套层次（"异常逻辑前置，正常逻辑后置"）
+
+```javascript
+// 不推荐
+if (isValid) {
+  if(data){
+    // 逻辑    
+  }
+}
+
+// 推荐
+if (!data) return;
+if (!isValid) return;
+// 逻辑 
+```
+
+### 三元运算符使用
+- 对于简单的条件判断可以使用三元运算符，但应避免嵌套三元运算符
+
+### 复杂判断逻辑处理
+- 复杂判断逻辑抽离成单独函数
+```javascript
+// 复杂判断逻辑
+function checkGameStatus() {
+  if (remaining === 0 ||
+    (remaining === 1 && remainingPlayers === 1) ||
+    remainingPlayers === 0) {
+      quitGame()
+  }
+}
+
+// 复杂判断逻辑抽离成单独函数，更方便阅读
+function isGameOver() {
+  return (
+    remaining === 0 ||
+    (remaining === 1 && remainingPlayers === 1) ||
+    remainingPlayers === 0
+  );
+}
+
+function checkGameStatus() {
+  if (isGameOver()) {
+    quitGame();
+  }
+}
+```
+
+- 分支逻辑优化
+```javascript
+// if else
+const statusMap = (status) => {
+  if(status === 'success') return 'SuccessFully'
+  else if (status === 'fail') return 'failed'
+  else if (status === 'danger') return 'dangerous'
+  else if (status === 'info') return 'information'
+  else if (status === 'text') return 'texts'
+  else return status
+}
+
+// 使用映射进行优化，代替分支逻辑
+const STATUS_MAP = {
+  'success': 'Successfull',
+  'fail': 'failed',
+  'warn': 'warning',
+  'danger': 'dangerous',
+  'info': 'information',
+  'text': 'texts'
+}
+return STATUS_MAP[status] ?? status
+```
+
+## 性能优化规范
+
+### 图片优化
+- 图片资源使用合适的尺寸与格式：一般使用2倍ui图尺寸即可 ❤️
+- 图片懒加载：确保非首屏图片采用懒加载（`<img loading="lazy">`），减少初始加载体积
+
+### 减少重绘与重排
+- 尽量减少DOM操作和样式修改，缓存DOM元素减少查询，避免频繁触发重绘（repaint）或重排（reflow）
+- 脱离文档流进行大量的dom操作：通过display: none先移出文档流
+```javascript
+const list = document.getElementById('list');
+list.style.display = 'none';  // 先隐藏列表，避免多次重排
+
+for (let i = 0; i < 100; i++) {
+  const li = document.createElement('li');
+  li.textContent = `Item ${i}`;
+  list.appendChild(li);
+}
+
+list.style.display = '';  // 批量操作完成后再显示
+```
+
+### 节流与防抖
+- 对于频繁触发的用户操作（如输入、滚动、点击），使用节流（throttle）和防抖（debounce）技术，避免性能瓶颈

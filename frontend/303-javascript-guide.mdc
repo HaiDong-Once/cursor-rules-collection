@@ -1,0 +1,528 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# JavaScript编码指南 (303)
+
+## 规则概述
+
+本规范定义了JavaScript的编码规范和最佳实践，旨在提高代码质量、可读性和可维护性。
+
+## 基本规范
+
+### 1.1 命名规范
+
+- **变量命名**：使用驼峰命名法（camelCase）
+- **常量命名**：使用全大写下划线分隔（UPPER_SNAKE_CASE）
+- **函数命名**：使用动词短语，驼峰命名法（如：`getUserInfo`）
+- **组件命名**：使用大驼峰命名法（PascalCase）
+- **布尔值**：以 `is`、`has`、`can`、`should` 开头
+- **数组命名**：使用复数形式，如 `users` 或 `userList`
+
+```javascript
+// 变量命名
+let userName = 'Zhang San';
+const MAX_COUNT = 100;
+
+// 函数命名
+function getUserProfile() { /*...*/ }
+
+// 组件命名
+class UserProfile extends Component { /*...*/ }
+
+// 布尔值
+const isActive = true;
+const hasPermission = false;
+
+// 数组
+const userList = [];
+const products = [];
+```
+
+### 1.2 代码格式
+
+- 使用2个空格缩进
+- 语句末尾使用分号
+- 花括号起始位置与声明在同一行
+- 单行代码长度不超过80-100个字符
+- 使用空行分离代码逻辑块
+
+```javascript
+// 推荐
+function calculateTotal(items) {
+  let total = 0;
+  
+  for (let i = 0; i < items.length; i++) {
+    total += items[i].price;
+  }
+  
+  return total;
+}
+```
+
+### 1.3 引号使用
+
+- 统一使用单引号（`'`）而非双引号（`"`）
+- 模板字符串使用反引号（`` ` ``）
+
+```javascript
+// 推荐
+const name = 'John Doe';
+const greeting = `Hello, ${name}!`;
+
+// 不推荐
+const name = "John Doe";
+```
+
+## ES6+特性使用
+
+### 2.1 变量声明
+
+- 使用 `const` 和 `let` 代替 `var`
+- 默认使用 `const`，只有在需要重新赋值时使用 `let`
+- 避免使用 `var`（存在变量提升和作用域问题）
+
+```javascript
+// 推荐
+const PI = 3.14;
+let count = 0;
+count++;
+
+// 不推荐
+var PI = 3.14;
+var count = 0;
+```
+
+### 2.2 箭头函数
+
+- 优先使用箭头函数，特别是在回调函数中
+- 简单的单行表达式无需花括号和return语句
+- 多行表达式使用花括号和return语句
+
+```javascript
+// 单行箭头函数
+const double = x => x * 2;
+
+// 多行箭头函数
+const calculateArea = (width, height) => {
+  const area = width * height;
+  return area;
+};
+
+// 回调函数
+items.map(item => item.value);
+```
+
+### 2.3 解构赋值
+
+- 使用对象解构获取对象属性
+- 函数参数过多时使用对象参数，解构获取
+
+```javascript
+// 对象解构
+const { name, age, address } = user;
+
+// 函数参数解构
+function getUserInfo({ name, age, address }) {
+  // 使用 name, age, address
+}
+
+getUserInfo({
+  name: '张三',
+  age: 30,
+  address: '北京'
+});
+```
+
+### 2.4 展开运算符
+
+- 使用展开运算符（`...`）合并对象和数组
+
+```javascript
+// 合并数组
+const arr1 = [1, 2, 3];
+const arr2 = [4, 5, 6];
+const combined = [...arr1, ...arr2];
+
+// 合并对象
+const defaults = { theme: 'light', language: 'en' };
+const userSettings = { theme: 'dark' };
+const settings = { ...defaults, ...userSettings };
+```
+
+### 2.5 模板字符串
+
+- 使用模板字符串拼接字符串
+- 避免使用 `+` 运算符连接字符串
+
+```javascript
+// 推荐
+const message = `Hello, ${userName}. You have ${notificationCount} notifications.`;
+
+// 不推荐
+const message = 'Hello, ' + userName + '. You have ' + notificationCount + ' notifications.';
+```
+
+## 函数规范
+
+### 3.1 函数参数
+
+- 参数不超过3个，超过则使用对象传参
+- 为参数提供默认值
+- 使用命名参数提高可读性
+
+```javascript
+// 不推荐
+function createUser(name, age, role, status, createdAt) {
+  // ...
+}
+
+// 推荐
+function createUser({ name, age, role = 'user', status = 'active', createdAt = new Date() }) {
+  // ...
+}
+
+createUser({
+  name: '张三',
+  age: 30
+});
+```
+
+### 3.2 函数返回值
+
+- 保持一致的返回值类型
+- 尽早返回（early return）避免嵌套条件
+
+```javascript
+// 不推荐
+function processOrder(order) {
+  if (order.isValid) {
+    if (order.hasItems) {
+      // 处理订单
+      return { success: true };
+    } else {
+      return { success: false, error: 'No items' };
+    }
+  } else {
+    return { success: false, error: 'Invalid order' };
+  }
+}
+
+// 推荐
+function processOrder(order) {
+  if (!order.isValid) {
+    return { success: false, error: 'Invalid order' };
+  }
+  
+  if (!order.hasItems) {
+    return { success: false, error: 'No items' };
+  }
+  
+  // 处理订单
+  return { success: true };
+}
+```
+
+### 3.3 纯函数
+
+- 尽量编写纯函数，避免副作用
+- 函数的输出仅依赖于其输入，不修改外部状态
+
+```javascript
+// 纯函数
+function calculateTotal(items) {
+  return items.reduce((total, item) => total + item.price, 0);
+}
+
+// 非纯函数（有副作用）
+function addItemAndCalculateTotal(items, newItem) {
+  items.push(newItem);  // 修改了外部状态
+  return items.reduce((total, item) => total + item.price, 0);
+}
+```
+
+## 异步编程
+
+### 4.1 Promise 使用
+
+- 使用 Promise 或 async/await 处理异步操作
+- 避免回调地狱，使用链式Promise处理
+- 必须处理所有 Promise 的 catch，不忽略错误
+
+```javascript
+// 推荐
+function fetchUserData(userId) {
+  return fetch(`/api/users/${userId}`)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('User not found');
+      }
+      return response.json();
+    })
+    .catch(error => {
+      console.error('Error fetching user data:', error);
+      throw error;
+    });
+}
+```
+
+### 4.2 Async/Await
+
+- 优先使用 async/await 替代纯 Promise 链
+- 所有 await 调用都包裹在 try/catch 中
+- 避免循环中使用 await（除非需要顺序执行）
+
+```javascript
+// 推荐
+async function fetchUserProfile(userId) {
+  try {
+    const user = await fetchUserData(userId);
+    const posts = await fetchUserPosts(userId);
+    return { user, posts };
+  } catch (error) {
+    console.error('Error fetching user profile:', error);
+    throw error;
+  }
+}
+```
+
+## 错误处理
+
+### 5.1 异常捕获
+
+- 使用 try/catch 捕获所有可能的异常
+- 针对不同类型的错误提供不同的处理逻辑
+- 提供有意义的错误信息，记录错误详情
+
+```javascript
+try {
+  const data = JSON.parse(jsonString);
+  processData(data);
+} catch (error) {
+  if (error instanceof SyntaxError) {
+    console.error('Invalid JSON format:', error.message);
+  } else {
+    console.error('Error processing data:', error.message);
+  }
+}
+```
+
+### 5.2 自定义错误
+
+- 创建自定义错误类扩展内置Error
+- 为不同类型的错误提供特定的错误类
+
+```javascript
+class ApiError extends Error {
+  constructor(message, statusCode) {
+    super(message);
+    this.name = 'ApiError';
+    this.statusCode = statusCode;
+  }
+}
+
+try {
+  const response = await fetch('/api/data');
+  if (!response.ok) {
+    throw new ApiError('API request failed', response.status);
+  }
+} catch (error) {
+  if (error instanceof ApiError) {
+    // 处理API错误
+  } else {
+    // 处理其他错误
+  }
+}
+```
+
+## 性能优化
+
+### 6.1 避免不必要的渲染和计算
+
+- 使用记忆化（memoization）缓存计算结果
+- 避免在循环中创建函数或对象
+- 高频事件使用节流（throttle）和防抖（debounce）
+
+```javascript
+// 防抖函数
+function debounce(fn, delay) {
+  let timer = null;
+  return function(...args) {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      fn.apply(this, args);
+    }, delay);
+  };
+}
+
+// 使用防抖
+const debouncedSearch = debounce(searchFunction, 300);
+searchInput.addEventListener('input', debouncedSearch);
+```
+
+### 6.2 避免内存泄漏
+
+- 及时清理不再使用的事件监听器
+- 避免循环引用
+- 使用 WeakMap 和 WeakSet 存储对象引用
+
+```javascript
+// 添加监听器
+const handleClick = () => {
+  console.log('Button clicked');
+};
+button.addEventListener('click', handleClick);
+
+// 移除监听器
+button.removeEventListener('click', handleClick);
+```
+
+## 模块化编程
+
+### 7.1 ES模块
+
+- 使用 ES 模块语法（import/export）
+- 一个文件只导出一个主要功能
+- 避免过度拆分模块
+
+```javascript
+// user-service.js
+export function fetchUser(id) { /*...*/ }
+export function updateUser(user) { /*...*/ }
+
+// 默认导出
+export default class UserService { /*...*/ }
+
+// 导入
+import UserService, { fetchUser, updateUser } from './user-service.js';
+```
+
+### 7.2 模块命名
+
+- 模块文件名使用kebab-case（小写字母和连字符）
+- 模块文件名反映其功能或包含的类名
+
+```
+- user-service.js
+- form-validation.js
+- api-client.js
+```
+
+## 注释规范
+
+### 8.1 JSDoc 注释
+
+- 使用 JSDoc 格式注释函数、类和复杂方法
+- 注明参数类型、返回值和可能的异常
+
+```javascript
+/**
+ * 计算两个数的和
+ * @param {number} a - 第一个数
+ * @param {number} b - 第二个数
+ * @returns {number} 两数之和
+ */
+function add(a, b) {
+  return a + b;
+}
+```
+
+### 8.2 代码注释原则
+
+- 注释解释"为什么"而不是"做了什么"
+- 复杂算法和业务逻辑需要详细注释
+- 避免注释显而易见的代码
+
+```javascript
+// 不推荐
+// 将计数器加1
+counter++;
+
+// 推荐
+// 当新用户注册成功时增加计数器，用于跟踪转化率
+counter++;
+```
+
+## 测试规范
+
+### 9.1 单元测试
+
+- 关键函数必须编写单元测试
+- 测试用例需覆盖正常、异常和边界情况
+- 测试应该是可重复和独立的
+
+```javascript
+// 使用 Jest 的测试示例
+describe('add function', () => {
+  test('should add two positive numbers correctly', () => {
+    expect(add(2, 3)).toBe(5);
+  });
+  
+  test('should handle negative numbers', () => {
+    expect(add(-1, -2)).toBe(-3);
+  });
+  
+  test('should handle zero', () => {
+    expect(add(0, 5)).toBe(5);
+  });
+});
+```
+
+### 9.2 测试驱动开发
+
+- 先编写测试用例，再实现功能
+- 重构代码时确保所有测试仍然通过
+- 测试覆盖率应该保持在适当水平（通常80%以上）
+
+## 最佳实践
+
+### 10.1 避免魔法数字和字符串
+
+- 将常量值提取为有命名的常量
+- 使用枚举或对象映射代替多个 if/else 或 switch
+
+```javascript
+// 不推荐
+if (status === 1) {
+  // 处理已发布状态
+} else if (status === 2) {
+  // 处理草稿状态
+}
+
+// 推荐
+const STATUS = {
+  PUBLISHED: 1,
+  DRAFT: 2,
+  ARCHIVED: 3
+};
+
+if (status === STATUS.PUBLISHED) {
+  // 处理已发布状态
+} else if (status === STATUS.DRAFT) {
+  // 处理草稿状态
+}
+```
+
+### 10.2 复杂度控制
+
+- 函数不超过50行
+- 单个文件不超过300-500行
+- 条件嵌套不超过3层
+- 复杂逻辑拆分为多个函数或类
+
+### 10.3 空值处理
+
+- 使用可选链操作符（`?.`）安全访问嵌套属性
+- 使用空值合并操作符（`??`）提供默认值
+- 避免深层嵌套的条件检查
+
+```javascript
+// 推荐
+const userName = user?.profile?.name ?? 'Guest';
+
+// 不推荐
+const userName = user && user.profile && user.profile.name ? user.profile.name : 'Guest';
+```
+
+
