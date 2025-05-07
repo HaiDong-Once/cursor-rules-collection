@@ -1,0 +1,102 @@
+name: 验证规则文件
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - '**/*.mdc'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - '**/*.mdc'
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: 设置Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          
+      - name: 安装依赖
+        run: |
+          npm install -g markdown-cli
+          npm install -g yaml
+          
+      - name: 验证规则文件格式
+        run: |
+          echo "验证规则文件格式..."
+          find . -name "*.mdc" -type f -exec sh -c '
+            echo "检查 $1"
+            if ! markdown-cli validate "$1"; then
+              echo "错误: $1 格式无效"
+              exit 1
+            fi
+          ' sh {} \;
+          
+      - name: 检查规则命名一致性
+        run: |
+          echo "检查规则命名一致性..."
+          find . -name "*.mdc" -type f -exec sh -c '
+            FILE=$(basename "$1")
+            DIR=$(dirname "$1")
+            CATEGORY=$(basename "$DIR")
+            PREFIX=$(echo "$FILE" | cut -d'-' -f1)
+            
+            if ! [[ "$PREFIX" =~ ^[0-9]{3}$ ]]; then
+              echo "错误: $1 前缀不符合规范（应为三位数字）"
+              exit 1
+            fi
+            
+            case "$CATEGORY" in
+              "core")
+                if [ "$PREFIX" -lt 1 ] || [ "$PREFIX" -gt 99 ]; then
+                  echo "错误: $1 编号应在001-099范围内"
+                  exit 1
+                fi
+                ;;
+              "integration")
+                if [ "$PREFIX" -lt 100 ] || [ "$PREFIX" -gt 199 ]; then
+                  echo "错误: $1 编号应在100-199范围内"
+                  exit 1
+                fi
+                ;;
+              "patterns")
+                if [ "$PREFIX" -lt 200 ] || [ "$PREFIX" -gt 299 ]; then
+                  echo "错误: $1 编号应在200-299范围内"
+                  exit 1
+                fi
+                ;;
+              "frontend")
+                if [ "$PREFIX" -lt 300 ] || [ "$PREFIX" -gt 399 ]; then
+                  echo "错误: $1 编号应在300-399范围内"
+                  exit 1
+                fi
+                ;;
+              "performance")
+                if [ "$PREFIX" -lt 400 ] || [ "$PREFIX" -gt 499 ]; then
+                  echo "错误: $1 编号应在400-499范围内"
+                  exit 1
+                fi
+                ;;
+              "data")
+                if [ "$PREFIX" -lt 500 ] || [ "$PREFIX" -gt 599 ]; then
+                  echo "错误: $1 编号应在500-599范围内"
+                  exit 1
+                fi
+                ;;
+              "workflow")
+                if [ "$PREFIX" -lt 600 ] || [ "$PREFIX" -gt 699 ]; then
+                  echo "错误: $1 编号应在600-699范围内"
+                  exit 1
+                fi
+                ;;
+            esac
+          ' sh {} \;
+          
+      - name: 验证完成
+        run: echo "所有规则文件验证通过！" 
